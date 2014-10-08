@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -15,14 +16,19 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eel.kitchen.jsonschema.main.JsonSchema;
-import org.eel.kitchen.jsonschema.main.JsonSchemaFactory;
-import org.eel.kitchen.jsonschema.report.ValidationReport;
-import org.eel.kitchen.jsonschema.util.JsonLoader;
+
+import sj.jsonschemavalidation.ISchemaProvider;
 
 import com.fasterxml.jackson.core.JsonLocation;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.TextNode;
+import com.github.fge.jackson.JsonLoader;
+import com.github.fge.jsonschema.core.exceptions.ProcessingException;
+import com.github.fge.jsonschema.core.report.ProcessingMessage;
+import com.github.fge.jsonschema.core.report.ProcessingReport;
+import com.github.fge.jsonschema.main.JsonSchema;
+import com.github.fge.jsonschema.main.JsonSchemaFactory;
 
 
 public class ValidateJson {
@@ -140,7 +146,7 @@ public class ValidateJson {
 	 */
 	public static void checkResource(IResource resource) {
 		// JSON file?
-		if (resource instanceof IFile && resource.getName().endsWith(".json")) {
+		if (resource instanceof IFile) {
 			IFile file = (IFile) resource;
 			if (!file.exists()) {
 				logger.fine("File removed: " + file.getName());
@@ -148,41 +154,60 @@ public class ValidateJson {
 			}
 			
 			try {
-				// has schema?
-				IResource schemaResource = getSchemaResource(file);
-				if (schemaResource != null && schemaResource instanceof IFile) {
-					IFile schemaFile = (IFile) schemaResource;
-					
+				String schemaString = getSchemaByExtension(file);
+				if (schemaString != null) {
 					// validate
 					deleteMarkers(file);
-					checkAgainst(file, schemaFile);
+					checkAgainst(file, schemaString);
 						
-				} else {
-					// is schema?
-					if (!(resource instanceof IFile)) return;
-					IFile schemaOrDataFile = (IFile) resource;
-					List<IFile> dependent = datafileBySchema.get(resource);
-					if (dependent != null && dependent.size() > 0) {
-						for (IFile datafile : dependent) {
-							logger.fine(datafile  + " status affected by schema " + schemaOrDataFile);
-							deleteMarkers(datafile);
-							checkAgainst(datafile, schemaOrDataFile);
-						}
+				}
+				// has schema?
+				else if (resource.getName().endsWith(".json")) {
+					IResource schemaResource = getSchemaResource(file);
+					if (schemaResource != null && schemaResource instanceof IFile) {
+						IFile schemaFile = (IFile) schemaResource;
+						
+						// validate
+						deleteMarkers(file);
+						checkAgainst(file, schemaFile);
+							
 					} else {
-						// Has, and is, no schema? check syntax
-						logger.fine("No Schema for " + file.toString());
-						deleteMarkers(schemaOrDataFile);
-						checkAgainst(schemaOrDataFile, null);
+						// is schema?
+						IFile schemaOrDataFile = (IFile) resource;
+						List<IFile> dependent = datafileBySchema.get(resource);
+						if (dependent != null && dependent.size() > 0) {
+							for (IFile datafile : dependent) {
+								logger.fine(datafile  + " status affected by schema " + schemaOrDataFile);
+								deleteMarkers(datafile);
+								checkAgainst(datafile, schemaOrDataFile);
+							}
+						} else {
+							// Has, and is, no schema? check syntax
+							logger.fine("No Schema for " + file.toString());
+							deleteMarkers(schemaOrDataFile);
+							checkAgainst(schemaOrDataFile, (String)null);
+						}
 					}
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
 			} catch (CoreException e) {
 				e.printStackTrace();
+			} catch (ProcessingException e) {
+				e.printStackTrace();
 			}
 		}
 	}
 
+
+	private static String getSchemaByExtension(IFile file) {
+		List<ISchemaProvider> schemaProviders = Activator.getDefault().getSchemaProviders();
+		for (ISchemaProvider schemaProvider : schemaProviders) {
+			String schema = schemaProvider.getSchemaFor(file);
+			if (schema != null) return schema;
+		}
+		return null;
+	}
 
 	/* add marker for given resource file using parse exception. */ 
 	private static void handleParseException(IFile file, JsonParseException parseException) {
@@ -198,14 +223,31 @@ public class ValidateJson {
 	}
 
 	private static void checkAgainst(IFile file, IFile schemaFile)
-			throws IOException, CoreException {
+			throws IOException, CoreException, ProcessingException {
+		String schemaString = null;
+		// No schema? Use empty schema to get syntax messages.
+		if (schemaFile != null) {
+			schemaString = readFile(schemaFile);
+		}
+
+		checkAgainst(file, schemaString);
+	}
+
+	/**
+	 * @param file
+	 * @param schemaString
+	 * @throws IOException
+	 * @throws CoreException
+	 * @throws ProcessingException
+	 */
+	private static void checkAgainst(IFile file, String schemaString)
+			throws IOException, CoreException, ProcessingException {
 		String where = " (" + file.getName() + ". Schema: " + 
-			(schemaFile == null ? "(none)" : schemaFile.getName()) + ")"; 
+			(schemaString == null ? "(none)" : schemaString) + ")"; 
 		// File ioFile = new File(file.getLocation().toPortableString());				
 		// JsonNode root = JsonLoader.fromFile(ioFile);
 		
 		final String all = readFile(file);
-		Map<String, Integer> lineNumbersByJsonPointer = JsonLineNumbers.handleString(all);
 		
 		JsonNode root;
 		
@@ -219,35 +261,54 @@ public class ValidateJson {
 		
 		// .getLocation().toPortableString()
 		JsonNode schemaJson = JsonLoader.fromString("{}");
-		// No schema? Use empty schema to get syntax messages.
-		if (schemaFile != null) {
-			schemaJson = JsonLoader.fromString(readFile(schemaFile));
+		if (schemaString != null) {
+			schemaJson = JsonLoader.fromString(schemaString);
 		}
-		final JsonSchemaFactory factory = JsonSchemaFactory.defaultFactory();
+		final JsonSchemaFactory factory = JsonSchemaFactory.byDefault();
 
-		final JsonSchema schema = factory.fromSchema(schemaJson);
+		final JsonSchema schema = factory.getJsonSchema(schemaJson);
 
-		ValidationReport report;
+		ProcessingReport report;
 
 		report = schema.validate(root);
 		logger.finer(report + where);
 		
 		
+		Iterator<ProcessingMessage> iterator = report.iterator();
 		// add markers
-		for (String msg : report.getMessages()) {
-			logger.fine(msg + where);
-			int lineNo = 1;
-			if (msg != null && msg.length() > 1 && msg.substring(1).indexOf('"') > -1) {
-				String pointer = msg.substring(1, msg.substring(1).indexOf('"')+1);
+		if (iterator.hasNext()) {
+			Map<String, Integer> lineNumbersByJsonPointer = JsonLineNumbers
+					.handleString(all);
+			while (iterator.hasNext()) {
+				ProcessingMessage pm = iterator.next();
+				String msg = pm.getMessage();
+				logger.fine(msg + where);
+				int lineNo = 1;
+				JsonNode json = pm.asJson();
+				JsonNode reports = json.get("reports");
+				if (reports != null) {
+					Iterator<JsonNode> elements = reports.elements();
+					while (elements.hasNext()) {
+						JsonNode reportArray = elements.next();
+						Iterator<JsonNode> elemts2 = reportArray.elements();
+						while (elemts2.hasNext()) {
+							JsonNode jsonNode = elemts2.next().get("message");
+							msg += "\n\t" + ((TextNode) jsonNode).asText();
+						}
+						if (elements.hasNext())
+							msg += "\nor";
+					}
+					reports.getNodeType();
+				}
+				String pointer = ((TextNode) json.get("instance")
+						.get("pointer")).asText();
 				if (lineNumbersByJsonPointer.containsKey(pointer)) {
 					lineNo = lineNumbersByJsonPointer.get(pointer);
-				} else {
-					logger.warning("Unknown line number of \""+ pointer + "\"");
+				} else if (!"".equals(pointer)){
+					logger.warning("Unknown line number of \"" + pointer + "\"");
 				}
-			} else {
-				logger.warning("No pointer in message: \""+ msg + "\"");
+				addMarker(file, msg, lineNo, IMarker.SEVERITY_ERROR);
 			}
-			addMarker(file, msg, lineNo, IMarker.SEVERITY_ERROR);
 		}
 	}
 
