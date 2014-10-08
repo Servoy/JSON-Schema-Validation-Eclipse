@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Json Schema Validation
+Bundle-Name: sj.jsonschemavalidation
 Bundle-SymbolicName: sj.jsonschemavalidation;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.0.SNAPSHOT
 Bundle-Activator: sj.jsonschemavalidation.builder.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
@@ -10,12 +10,8 @@ Require-Bundle: org.eclipse.ui,
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .,
- lib/guava-13.0.1.jar,
- lib/jackson-annotations-2.1.1.jar,
- lib/jackson-core-2.1.1.jar,
- lib/jackson-databind-2.1.1.jar,
- lib/joda-time-2.1.jar,
- lib/json-schema-validator-1.4.6.jar,
- lib/libphonenumber-5.2.jar,
- lib/mailapi-1.4.3.jar,
- lib/rhino-1.7R4.jar
+ lib/jackson-core-2.4.3.jar,
+ lib/jackson-databind-2.4.3.jar,
+ lib/json-schema-validator-2.2.5-lib.jar,
+ lib/jackson-annotations-2.4.3.jar
+Export-Package: sj.jsonschemavalidation
