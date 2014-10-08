@@ -19,7 +19,9 @@ public class JsonLineNumbers {
 		StringBuilder pointer = new StringBuilder();
 		List<Object> items = Collections.list(s.elements());
 		for (Object item : items) {
-			pointer.append("/" + item);
+			if (!"".equals(item)) {
+				pointer.append("/" + item);
+			}
 		}
 		if (leaf != null) {
 			pointer.append("/" + leaf);
@@ -47,10 +49,11 @@ public class JsonLineNumbers {
 				logger.finer("Token is " + jp.nextToken());
 				return Collections.emptyMap();
 			}
+			stack.push("");
 			token = jp.nextToken();
 			while (jp.hasCurrentToken()) {				
 				if (token == JsonToken.START_OBJECT) {
-					logger.finer("[ ");
+					logger.finer("{ ");
 					String name = jp.getCurrentName();
 					if (name == null) {
 						Object top = null;
@@ -60,23 +63,23 @@ public class JsonLineNumbers {
 						if (top instanceof Integer) {
 							stack.pop();
 							stack.push(((Integer) top) + 1);
-						} else {
-							// Unnamed object not root object?
-							String pointer = stackToPointer(stack, jp.getCurrentName());
-							int lineNo = jp.getCurrentLocation().getLineNr();
-							logger.finer(lineNo + " " + pointer);
-							lineNumbersByJsonPointer.put(pointer, lineNo);
 						}
+						stack.push("");
+						// Unnamed object not root object?
+						String pointer = stackToPointer(stack, jp.getCurrentName());
+						int lineNo = jp.getCurrentLocation().getLineNr();
+						logger.finer(lineNo + " " + pointer);
+						lineNumbersByJsonPointer.put(pointer, lineNo);
 					} else {
 						stack.push(name);
 					}
 				} else if (token == JsonToken.END_OBJECT) {				
-					// laving object
+					// leaving object
 					// pop unless array item
-					if (!stack.empty() && !(stack.peek() instanceof Integer)) {
-						logger.finer("} ");
-						if(! stack.empty()) stack.pop();
+					if (stack.isEmpty()) {
+						System.err.println("empty");
 					}
+					stack.pop(); // pop the "" or name
 				} else if (token == JsonToken.START_ARRAY) {
 					logger.finer("[ ");
 					stack.push(jp.getCurrentName());
@@ -86,6 +89,17 @@ public class JsonLineNumbers {
 					if(! stack.empty()) stack.pop(); // array index
 					if(! stack.empty()) stack.pop(); // field name
 				} else if (token == JsonToken.FIELD_NAME) {
+					String pointer = stackToPointer(stack, jp.getCurrentName());
+					int lineNo = jp.getCurrentLocation().getLineNr();
+					logger.finer(lineNo + " " + pointer);
+					lineNumbersByJsonPointer.put(pointer, lineNo);
+				} else if (token == JsonToken.VALUE_STRING && !stack.empty()) {
+					Object top = stack.peek(); 
+					if (top instanceof Integer) {
+						stack.pop();
+						stack.push(((Integer) top) + 1);
+					}
+					// Unnamed object not root object?
 					String pointer = stackToPointer(stack, jp.getCurrentName());
 					int lineNo = jp.getCurrentLocation().getLineNr();
 					logger.finer(lineNo + " " + pointer);
