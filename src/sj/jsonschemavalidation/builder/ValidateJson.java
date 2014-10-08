@@ -270,7 +270,7 @@ public class ValidateJson {
 
 		ProcessingReport report;
 
-		report = schema.validate(root);
+		report = schema.validate(root,true);
 		logger.finer(report + where);
 		
 		
