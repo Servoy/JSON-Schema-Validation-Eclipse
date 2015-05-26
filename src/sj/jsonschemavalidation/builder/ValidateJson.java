@@ -137,6 +137,8 @@ public class ValidateJson {
 		while((line = in.readLine()) != null) {
 			all.append(line).append('\n');
 		}
+		in.close();
+		reader.close();
 		return all.toString();
 	}
 	
