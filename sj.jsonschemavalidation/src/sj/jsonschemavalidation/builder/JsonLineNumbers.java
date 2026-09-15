@@ -43,7 +43,7 @@ public class JsonLineNumbers {
 
 		try {
 			JsonFactory f = new JsonFactory();
-			JsonParser jp = f.createJsonParser(content);
+			JsonParser jp = f.createParser(content);
 			JsonToken token = jp.nextToken();
 			if (token != JsonToken.START_OBJECT) {
 				logger.finer("Token is " + jp.nextToken());

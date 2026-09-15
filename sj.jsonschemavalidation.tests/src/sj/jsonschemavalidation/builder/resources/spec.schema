@@ -1,0 +1,1146 @@
+{
+    "title": "Spec file schema",
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "description": "Spec file schema",
+    "type": "object",
+    
+    "definitions": {
+       "propertyConfig": {
+           "type": "object",
+           "properties": {
+                "droppable": {
+                    "type": "boolean"
+                },
+                "for": {
+                    "oneOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "array"
+                        },
+                        {
+                            "type": "object"
+                        }
+                    ]
+                },
+                "blockingOn": {
+                    "type": "boolean"
+                },
+                "provideColumnFormats": {
+                    "type": "boolean"
+                },
+                "includeColumnNames": {
+                    "type": "boolean"
+                },
+                "columnTypes": {
+                    "type": "object"
+                },
+                "tags": {
+                    "type": "object"
+                },
+                "values": {
+                    "type": "array"
+                },
+                "default": {
+                },
+                "initialValue": {
+                },
+                "ondatachange": {
+                    "description": "object that configures that this dataprovider type has ondatachange support",
+                    "type": "object",
+                    "properties": {
+                          "onchange": {"type":"string"},
+                          "callback": {"type":"string"},
+                          "parsehtml": {"type":"boolean"}
+                        },
+                      "required": ["onchange"],
+                    "additionalProperties": false
+                },
+                "forFoundset": {
+                    "type": "string"
+                },
+                "displayTagsPropertyName": {
+                    "type": "string"
+                },
+                "resolveValuelist": {
+                    "type": "boolean"
+                },
+                "oppositeOf": {
+                    "type": "string"
+                },
+                "dynamicDataproviders": {
+                    "type": "boolean"
+                },
+                "foundsetDefinitionListener": {
+                    "type": "boolean"
+                },
+                "initialPreferredViewPortSize": {
+                    "type": "number"
+                },
+                "sendSelectionViewportInitially": {
+                    "type": "boolean"
+                },
+                "pushToServer": {
+                      "enum" : ["reject", "allow", "shallow", "deep"]
+                },
+                "stringformat": {
+                    "type": "boolean"
+                },
+                "dataproviders": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "max": {
+                    "type": "number"
+                },
+                "config": {
+                    "type": "string"
+                },
+                "lazyLoading": {
+                    "type": "boolean"
+                },
+                "deprecated": {
+                    "type": "string"
+                }
+           },
+           "additionalProperties": false
+       }
+    },
+
+    "properties": 
+    {
+        "libraries": 
+        {
+            "items": 
+            {
+                "type": "object",
+                "properties": 
+                {
+                    "name": 
+                    {
+                        "type": "string"
+                    },
+                    "version":
+                    {
+                        "type": "string"
+                    },
+                    "url": {
+                        "type": "string"
+                    },
+                    "mimetype": {
+                        "type": "string"
+                    },
+                    "group": 
+                    {
+                        "description": "Specifies if this library can be grouped (for web resource optimization), default true",
+                        "type": "boolean"
+                    }
+                },
+                "required": ["name","version","url","mimetype"],
+                "additionalProperties": false
+            },
+            "description": "Extra Javascript or CSS libraries that this component uses",
+            "type": "array"
+        },
+        "keywords":
+        {
+            "description": "Array of keywords used for component search",
+            "type": "array"
+        },
+        "ng2Config": {
+            "description": "Configuration property for NG2",
+            "type": "object",
+            "properties": {
+                "dependencies": 
+                {
+                    "description": "Dependencies for NG2",
+                    "type": "object"
+                },
+                "packageName": {
+                     "description": "The npm package name",
+                     "type": "string"
+                },
+                "moduleName": {
+                     "description": "The module name for this service, then it is imported based on the module and not the service if this is given",
+                     "type": "string"
+                },
+                "serviceName":  {
+                     "description": "The exported service name",
+                     "type": "string"
+                },
+                "entryPoint":  {
+                     "description": "The entry point of the distribution",
+                     "type": "string"
+                },
+                "assets": 
+                {
+                    "description": "Assets for NG2",
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "glob": {
+                                "description": "the pattern what to include",
+                                "type": "string"
+                            },
+                            "input": {
+                                "description": "the source assets",
+                                "type": "string"
+                            },
+                            "output": {
+                                "description": "the output where it needs to go",
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "additionalProperties": false
+        },
+        "icon": 
+        {
+            "description": "The icon that is displayed in the designer",
+            "type": "string"
+        },
+        "preview": 
+        {
+            "description": "The preview gif",
+            "type": "string"
+        },
+        "contains": 
+        {
+            "description": "Array of allowed elements this layout can contain",
+            "type": "array"
+        },
+        "excludes": 
+        {
+            "description": "Array of elements this layout cannot contain",
+            "type": "array"
+        },
+        "topContainer": 
+        {
+            "description": "True if this layout is can be dropped directly on the form",
+            "type": "boolean"
+        },
+        "directives": 
+        {
+            "description": "True if this layout is can be dropped directly on the form",
+            "type": "array"
+        },
+        "absoluteLayout": 
+        {
+            "description": "True if this layout is can be dropped directly on the form",
+            "type": "boolean"
+        },
+        "layout": 
+        {
+            "description": "Layout of the container",
+            "type": "string"
+        },
+        "definition": 
+        {
+            "description": "The javascript definition",
+            "type": "string"
+        },
+        "categoryName" : 
+        {
+            "description": "The category name which is a sub node in the palette",
+            "type": "string"
+        },
+        "styleVariantCategory" : 
+        {
+            "description": "The category name which is a sub node in the palette",
+            "enum" : ["label", "button", "datalabel"]
+        },
+        "designStyleClass" :
+        {
+            "description": "A style class that is being used for a layout container purely in the designer",
+            "type": "string"
+        },
+        "attributes": 
+        {
+            "description": "Layout attributes definition",
+            "type": "string"
+        },
+        "tagType": 
+        {
+            "description": "Layout tagType definition",
+            "type": "string"
+        },
+        "name": 
+        {
+            "description": "The angular directive name of the component",
+            "type": "string"
+        },
+        "displayName": 
+        {
+            "description": "The name that is displayed in the designer",
+            "type": "string"
+        },
+        "version":
+        { 
+            "description": "The version of the component",
+            "oneOf": [
+                {
+                    "type": "string"
+                },
+                {
+                    "type": "number"
+                }
+            ]
+        },
+        "group": 
+        {
+            "description": "Specifies if this component can be grouped (for web resource optimization), default true",
+            "type": "boolean"
+        },
+        "deprecated": 
+        {
+            "type": "string"
+        },
+        "replacement": 
+        {
+            "type": "string"
+        },
+        "model":
+        {
+            "description": "The model this component has",
+            "type": "object",
+            "patternProperties": {
+                "^\\S+$": {
+                    "oneOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "object",
+                            "properties": {
+                                "type": {
+                                    "type": "string"
+                                },
+                                "droppable": {
+                                    "type": "boolean"
+                                },
+                                "for": {
+                                    "oneOf": [
+                                        {
+                                            "type": "string"
+                                        },
+                                        {
+                                            "type": "array"
+                                        },
+                                        {
+                                            "type": "object"
+                                        }
+                                    ]
+                                },
+                                "blockingOn": {
+                                    "type": "boolean"
+                                },
+                                "provideColumnFormats": {
+                                    "type": "boolean"
+                                },
+                                "includeColumnNames": {
+                                    "type": "boolean"
+                                },
+                                "columnTypes": {
+                                    "type": "object"
+                                },
+                                "pushToServer": {
+                                      "enum" : ["reject", "allow", "shallow", "deep"]
+                                },
+                                "tags": {
+                                    "type": "object"
+                                },
+                                "values": {
+                                    "type": "array"
+                                },
+                                "default": {
+                                },
+                                "initialValue": {
+                                },
+                                "ondatachange": {
+                                    "description": "object that configures that this dataprovider type has ondatachange support",
+                                    "type": "object",
+                                    "properties": {
+                                          "onchange": {"type":"string"},
+                                          "callback": {"type":"string"},
+                                          "parsehtml": {"type":"boolean"}
+                                        },
+                                      "required": ["onchange"],
+                                    "additionalProperties": false
+                                },
+                                "forFoundset": {
+                                    "type": "string"
+                                },
+                                "displayTagsPropertyName": {
+                                    "type": "string"
+                                },
+                                "resolveValuelist": {
+                                    "type": "boolean"
+                                },
+                                "multiselect": {
+                                    "type": "string"
+                                },
+                                "oppositeOf": {
+                                    "type": "string"
+                                },
+                                "dynamicDataproviders": {
+                                    "type": "boolean"
+                                },
+                                "initialPreferredViewPortSize": {
+                                    "type": "number"
+                                },
+                                "foundsetDefinitionListener": {
+                                    "type": "boolean"
+                                },
+                                "sendSelectionViewportInitially": {
+                                    "type": "boolean"
+                                },
+                                "stringformat": {
+                                    "type": "boolean"
+                                },
+                                "dataproviders": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    }
+                                },
+                                "max": {
+                                    "type": "number"
+                                },
+                                "config": {
+                                    "type": "string"
+                                },
+                                "lazyLoading": {
+                                    "type": "boolean"
+                                },
+                                "deprecated": {
+                                    "type": "string"
+                                },
+                                "elementConfig": {
+                                    "type": "object",
+                                    "allOf": [ { "$ref": "#/definitions/propertyConfig" } ]
+
+								},
+								"extraPropertiesCategory": {
+                                    "type": "string"
+                                },
+                                "extraProperties": {
+                                    "type": "object"
+                                }
+							},
+				        	"required":["type"],
+							"additionalProperties": false
+						}
+					]
+				}
+			},
+			"additionalProperties": false
+		},
+		"handlers":
+		{
+			"description": "The event handlers this component has",
+			"type": "object",
+			"patternProperties": {
+				"^\\S+$": {
+					"oneOf": [
+						{
+							"type": "string",
+				        	"enum" : ["function"]
+						},
+						{
+							"type": "object",
+							"description": "The description of this component handler",
+							"properties": {
+								"returns": {
+                                    "description": "the datatype this handler call returns",
+                                    "oneOf": [
+                                        {
+                                            "type": "string"
+                                        },
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "description": {
+                                                    "description": "the description of the result (please use 'doc' instead)",
+                                                    "type": "string"
+                                                },
+                                                "doc": {
+                                                    "description": "the description of the result",
+                                                    "type": "string"
+                                                },
+                                                "type": {
+                                                    "type": "string"
+                                                },
+                                                "default": {}
+                                            },
+                                            "required": ["type"],
+                                            "additionalProperties": false
+                                        }
+                                    ]
+                                },
+                                "parameters": {
+                                    "description": "the parameter types this handler call accepts",
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "name": {
+                                                "description": "the name of the parameter",
+                                                "type": "string"
+                                            },
+                                            "description": {
+                                                "description": "the description of the parameter (please use 'doc' instead)",
+                                                "type": "string"
+                                            },
+                                            "doc": {
+                                                "description": "the description of the parameter",
+                                                "type": "string"
+                                            },
+                                            "type": {
+                                                "description": "the type of the parameter",
+                                                "oneOf": [
+                                                    {
+                                                        "type": "string"
+                                                    },
+                                                    {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "type": {
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "type"
+                                                        ],
+                                                        "additionalProperties": true
+                                                    }
+                                                ]
+                                            },
+                                            "optional": {
+                                                "type": "boolean"
+                                            },
+                                            "tags": {
+                                                "type": "object"
+                                            }
+                                        },
+                                        "required": [
+                                            "name",
+                                            "type"
+                                        ],
+                                        "additionalProperties": false
+                                    }
+                                },
+                                "private": {
+                                            "type": "boolean"
+                                },
+                                "ignoreNGBlockDuplicateEvents": {
+                                            "type": "boolean"
+                                },
+                                "doc": {
+                                            "type": "string"
+                                },
+                                "code": {
+                                            "type": "string"
+                                },
+                                "deprecated": {
+                                    "type": "string"
+                                },
+                                "allowaccess": {
+                                    "description": "Comma separated list of properties for which blocking is ignored, like 'visible'.",
+                                    "type": "string"
+                                }                                               
+                            },
+                            "additionalProperties": false
+                        }
+                    ]
+                }
+            },
+            "additionalProperties": false
+        },
+        "api":
+        {
+            "description": "The api this component has",
+            "type": "object",
+            "patternProperties": {
+                "^\\S+$": {
+                    "type": "object",
+                    "properties": {
+                        "returns": {
+                            "description": "the datatype this api call returns",
+                                            "type": "string"
+                                        },
+                        "deprecated": {
+                            "type": "string"
+                        },
+                        "parameters": {
+                            "description": "the parameter types this api call accepts",
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "description": "the name of the parameter",
+                                        "type": "string"
+                                    },
+                                    "type": {
+                                        "description": "the type of the parameter",
+                                        "oneOf": [
+                                            {
+                                                "type": "string"
+                                            },
+                                            {
+                                                "type": "object",
+                                                "properties": {
+                                                    "type": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                  "required": ["type"],
+                                                "additionalProperties": true
+                                            }
+                                        ]
+                                    },
+                                    "optional": {
+                                        "type": "boolean"
+                                    },
+                                    "doc": {
+                                        "description": "the description of the parameter",
+                                        "type": "string"
+                                    }
+                                },
+                            "required": ["name","type"],
+                                "additionalProperties": false
+                            }
+                        },
+                        "delayUntilFormLoad": {
+                            "description": "Deprecated. Use delayUntilFormLoads instead.",
+                            "type": "boolean"
+                        },
+                        "delayUntilFormLoads": {
+                            "description": "Delay this api call until the form is really loaded on the client (example: requestFocus).",
+                            "type": "boolean"
+                        },
+                        "async": {
+                            "description": "Execute this api call async (don't wait for return value).",
+                            "type": "boolean"
+                        },
+                        "async-now": {
+                            "description": "Execute this api call async (don't wait for return value) but execute it right away.",
+                            "type": "boolean"
+                        },
+                        "blockEventProcessing": {
+                            "description": "Whether or not it should wait for the API to execute before returning control to script.",
+                            "type": "boolean"
+                        },
+                        "globalExclusive": {
+                            "description": "Deprecated. Use discardPreviouslyQueuedSimilarCalls instead.",
+                            "type": "boolean"
+                        },
+                        "discardPreviouslyQueuedSimilarCalls": {
+                            "description": "False by default. When true (only makes sense for async or delayUntilFormLoads type of calls), only the last call (inside an event handler on the event thread - when multiple async/delayed API calls get queued before being sent to the client) to this method (identified by method name) on any component on the current window will be executed. The previous calls are discarded. For example when the user clicks a button, an event handler on the server that executes lots of code might end up calling .requestFocus() on many components for many different forms on this window. But to keep things fast, only the last requestFocus() is really relevant and only that really needs to get executed on the client - there is no use in executing any of the others. So by marking requestFocus() with this flag in the .spec you can achieve that.",
+                            "type": "boolean"
+                        },
+                        "allowaccess": {
+                            "description": "Comma separated list of properties for which blocking is ignored, like 'visible'.",
+                            "type": "string"
+                        },
+                        "doc": {
+                            "type": "string",
+                            "description": "Api documentation description."
+                        }
+                                
+                    },
+                    "additionalProperties": false
+                }
+            },
+            "additionalProperties": false
+        },
+        "internalApi":
+        {
+            "description": "The internal api this component has, can be called from client or from server side scripting",
+            "type": "object",
+            "patternProperties": {
+                "^\\S+$": {
+                    "type": "object",
+                    "properties": {
+                        "returns": {
+                            "description": "the datatype this api call returns",
+                            "type": "string"
+                        },
+                        "parameters": {
+                            "description": "the parameter types this api call accepts",
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "description": "the name of the parameter",
+                                        "type": "string"
+                                    },
+                                    "type": {
+                                        "description": "the type of the parameter",
+                                        "oneOf": [
+                                            {
+                                                "type": "string"
+                                            },
+                                            {
+                                                "type": "object",
+                                                "properties": {
+                                                    "type": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                  "required": ["type"],
+                                                "additionalProperties": true
+                                            }
+                                        ]
+                                    },
+                                    "doc": {
+                                        "description": "the description of the parameter",
+                                        "type": "string"
+                                    },
+                                    "optional": {
+                                        "type": "boolean"
+                                    }
+                                },
+                            "required": ["name","type"],
+                                "additionalProperties": false
+                            }
+                        },
+                        "delayUntilFormLoads": {
+                            "description": "Delay this api call until the form is really loaded on the client (example: requestFocus).",
+                            "type": "boolean"
+                        },
+                        "async": {
+                            "description": "Execute this api call async (don't wait for return value).",
+                            "type": "boolean"
+                        },
+                        "async-now": {
+                            "description": "Execute this api call async (don't wait for return value) but execute it right away.",
+                            "type": "boolean"
+                        },
+                        "globalExclusive": {
+                            "description": "Deprecated. Use discardPreviouslyQueuedSimilarCalls instead.",
+                            "type": "boolean"
+                        },
+                        "discardPreviouslyQueuedSimilarCalls": {
+                            "description": "False by default. When true (only makes sense for async or delayUntilFormLoads type of calls), only the last call (inside an event handler on the event thread - when multiple async/delayed API calls get queued before being sent to the client) to this method (identified by method name) on any component on the current window will be executed. The previous calls are discarded. For example when the user clicks a button, an event handler on the server that executes lots of code might end up calling .requestFocus() on many components for many different forms on this window. But to keep things fast, only the last requestFocus() is really relevant and only that really needs to get executed on the client - there is no use in executing any of the others. So by marking requestFocus() with this flag in the .spec you can achieve that.",
+                            "type": "boolean"
+                        },
+                        "allowaccess": {
+                            "description": "Comma separated list of properties for which blocking is ignored, like 'visible'.",
+                            "type": "string"
+                        },
+                        "doc": {
+                            "type": "string",
+                            "description": "Api documentation description (internal only)."
+                        }                       
+                    },
+                    "additionalProperties": false
+                }
+            },
+            "additionalProperties": false
+        },
+        "serverscript": {
+            "description": "js reference that will be run on the server",
+            "type": "string"
+        },
+        "doc": {
+            "description": "doc file that will be parsed to extract api docs",
+            "type": "string"
+        },
+        "types": {
+            "description": "an object of custom types that is used in the model for property type or api for an return/parameter type",
+            "type": "object",
+            "patternProperties": {
+                "^\\S+$": {
+                    "anyOf" : [{
+                        "type": "object",
+                        "properties": {
+                            "model":
+                            {
+                                "description": "The model this component has",
+                                "type": "object",
+                                "patternProperties": {
+                                    "^\\S+$": {
+                                        "oneOf": [
+                                            {
+                                                "type": "string"
+                                            },
+                                            {
+                                                "type": "object",
+                                                "properties": {
+                                                    "type": {
+                                                        "type": "string"
+                                                    },
+                                                    "droppable": {
+                                                        "type": "boolean"
+                                                    },
+                                                    "for": {
+                                                        "oneOf": [
+                                                            {
+                                                                "type": "string"
+                                                            },
+                                                            {
+                                                                "type": "array"
+                                                            },
+                                                            {
+                                                                "type": "object"
+                                                            }
+                                                        ]
+                                                    },
+                                                    "blockingOn": {
+                                                        "type": "boolean"
+                                                    },
+                                                    "provideColumnFormats": {
+                                                        "type": "boolean"
+                                                    },
+                                                    "includeColumnNames": {
+                                                        "type": "boolean"
+                                                    },
+                                                    "columnTypes": {
+                                                        "type": "object"
+                                                    },
+                                                    "pushToServer": {
+                                                          "enum" : ["reject", "allow", "shallow", "deep"]
+                                                    },
+                                                    "tags": {
+                                                        "type": "object"
+                                                    },
+                                                    "values": {
+                                                        "type": "array"
+                                                    },
+                                                    "default": {
+                                                    },
+                                                    "initialValue": {
+                                                    },
+                                                    "ondatachange": {
+                                                        "description": "object that configures that this dataprovider type has ondatachange support",
+                                                        "type": "object",
+                                                        "properties": {
+                                                              "onchange": {"type":"string"},
+                                                              "callback": {"type":"string"},
+                                                              "parsehtml": {"type":"boolean"}
+                                                            },
+                                                          "required": ["onchange"],
+                                                        "additionalProperties": false
+                                                    },
+                                                    "forFoundset": {
+                                                        "type": "string"
+                                                    },
+                                                    "displayTagsPropertyName": {
+                                                        "type": "string"
+                                                    },
+                                                    "resolveValuelist": {
+                                                        "type": "boolean"
+                                                    },
+                                                    "oppositeOf": {
+                                                        "type": "string"
+                                                    },
+                                                    "dynamicDataproviders": {
+                                                        "type": "boolean"
+                                                    },
+                                                    "initialPreferredViewPortSize": {
+                                                        "type": "number"
+                                                    },
+                                                    "foundsetDefinitionListener": {
+                                                        "type": "boolean"
+                                                    },
+                                                    "sendSelectionViewportInitially": {
+                                                        "type": "boolean"
+                                                    },
+                                                    "stringformat": {
+                                                        "type": "boolean"
+                                                    },
+                                                    "dataproviders": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "string"
+                                                        }
+                                                    },
+                                                    "max": {
+                                                        "type": "number"
+                                                    },
+                                                    "config": {
+                                                        "type": "string"
+                                                    },
+                                                    "lazyLoading": {
+                                                        "type": "boolean"
+                                                    },
+                                                    "deprecated": {
+                                                        "type": "string"
+                                                    },
+                                                    "elementConfig": {
+                                                        "type": "object",
+                                                        "allOf": [ { "$ref": "#/definitions/propertyConfig" } ]
+                                                    }
+                                                },
+                                                "required":["type"],
+                                                "additionalProperties": false
+                                            }
+                                        ]
+                                    }
+                                },
+                                "additionalProperties": false
+                            },
+                            "extends": {
+                                "type": "string"
+                            },
+                            "tags": {
+                                "type": "object"
+                            },
+                            "serversideapi" : {
+                                    "description": "The internal api this component has, can be called from client or from server side scripting",
+                                    "type": "object",
+                                    "patternProperties": {
+                                        "^\\S+$": {
+                                            "type": "object",
+                                            "properties": {
+                                                "returns": {
+                                                    "description": "the datatype this api call returns",
+                                                    "type": "string"
+                                                },
+                                                "parameters": {
+                                                    "description": "the parameter types this api call accepts",
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "name": {
+                                                                "description": "the name of the parameter",
+                                                                "type": "string"
+                                                            },
+                                                            "type": {
+                                                                "description": "the type of the parameter",
+                                                                "oneOf": [
+                                                                    {
+                                                                        "type": "string"
+                                                                    },
+                                                                    {
+                                                                        "type": "object",
+                                                                        "properties": {
+                                                                            "type": {
+                                                                                "type": "string"
+                                                                            }
+                                                                        },
+                                                                          "required": ["type"],
+                                                                        "additionalProperties": true
+                                                                    }
+                                                                ]
+                                                            },
+                                                            "doc": {
+                                                                "description": "the description of the parameter",
+                                                                "type": "string"
+                                                            },
+                                                            "optional": {
+                                                                "type": "boolean"
+                                                            }
+                                                        },
+                                                    "required": ["name","type"],
+                                                        "additionalProperties": false
+                                                    }
+                                                },
+                                                "overloads": {
+                                                    "description": "An Array of objects (parameter/returns) that define the overloads of the API",
+                                                    "type": "array",
+                                                    "items" : {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "returns": {
+                                                                "description": "the datatype this api call returns",
+                                                                "type": "string"
+                                                            },
+                                                            "parameters": {
+                                                                "description": "the parameter types this api call accepts",
+                                                                "type": "array",
+                                                                "items": {
+                                                                    "type": "object",
+                                                                    "properties": {
+                                                                        "name": {
+                                                                            "description": "the name of the parameter",
+                                                                            "type": "string"
+                                                                        },
+                                                                        "type": {
+                                                                            "description": "the type of the parameter",
+                                                                            "oneOf": [
+                                                                                {
+                                                                                    "type": "string"
+                                                                                },
+                                                                                {
+                                                                                    "type": "object",
+                                                                                    "properties": {
+                                                                                        "type": {
+                                                                                            "type": "string"
+                                                                                        }
+                                                                                    },
+                                                                                      "required": ["type"],
+                                                                                    "additionalProperties": true
+                                                                                }
+                                                                            ]
+                                                                        },
+                                                                        "doc": {
+                                                                            "description": "the description of the parameter",
+                                                                            "type": "string"
+                                                                        },
+                                                                        "optional": {
+                                                                            "type": "boolean"
+                                                                        }
+                                                                    },
+                                                                "required": ["name","type"],
+                                                                    "additionalProperties": false
+                                                                }
+                                                            }
+                                                        },
+                                                        "additionalProperties": false
+                                                    }
+                                                }
+                                            },
+                                            "additionalProperties": false
+                                        }
+                                    },
+                                    "additionalProperties": false
+                                }
+                            }
+                    }, {
+                        "type": "object",
+                        "patternProperties": {
+                            "^\\S+$": {
+                                "oneOf": [
+                                    {
+                                        "type": "string"
+                                    },
+                                    {
+                                        "type": "object",
+                                        "properties": {
+                                            "type": {
+                                                "type": "string"
+                                            },
+                                            "droppable": {
+                                                "type": "boolean"
+                                            },
+                                            "for": {
+                                                "oneOf": [
+                                                    {
+                                                        "type": "string"
+                                                    },
+                                                    {
+                                                        "type": "array"
+                                                    },
+                                                    {
+                                                        "type": "object"
+                                                    }
+                                                ]
+                                            },
+                                            "blockingOn": {
+                                                "type": "boolean"
+                                            },
+                                            "provideColumnFormats": {
+                                                "type": "boolean"
+                                            },
+                                            "includeColumnNames": {
+                                                "type": "boolean"
+                                            },
+                                            "columnTypes": {
+                                                "type": "object"
+                                            },
+                                            "pushToServer": {
+                                                  "enum" : ["reject", "allow", "shallow", "deep"]
+                                            },
+                                            "tags": {
+                                                "type": "object"
+                                            },
+                                            "values": {
+                                                "type": "array"
+                                            },
+                                            "default": {
+                                            },
+                                            "initialValue": {
+                                            },
+                                            "ondatachange": {
+                                                "description": "object that configures that this dataprovider type has ondatachange support",
+                                                "type": "object",
+                                                "properties": {
+                                                      "onchange": {"type":"string"},
+                                                      "callback": {"type":"string"},
+                                                      "parsehtml": {"type":"boolean"}
+                                                    },
+                                                  "required": ["onchange"],
+                                                "additionalProperties": false
+                                            },
+                                            "forFoundset": {
+                                                "type": "string"
+                                            },
+                                            "displayTagsPropertyName": {
+                                                "type": "string"
+                                            },
+                                            "resolveValuelist": {
+                                                "type": "boolean"
+                                            },
+                                            "oppositeOf": {
+                                                "type": "string"
+                                            },
+                                            "dynamicDataproviders": {
+                                                "type": "boolean"
+                                            },
+                                            "initialPreferredViewPortSize": {
+                                                "type": "number"
+                                            },
+                                            "foundsetDefinitionListener": {
+                                                "type": "boolean"
+                                            },
+                                            "sendSelectionViewportInitially": {
+                                                "type": "boolean"
+                                            },
+                                            "stringformat": {
+                                                "type": "boolean"
+                                            },
+                                            "dataproviders": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "max": {
+                                                "type": "number"
+                                            },
+                                            "config": {
+                                                "type": "string"
+                                            },
+                                            "lazyLoading": {
+                                                "type": "boolean"
+                                            },
+                                            "deprecated": {
+                                                "type": "string"
+                                            },
+                                            "elementConfig": {
+                                                "type": "object",
+                                                "allOf": [ { "$ref": "#/definitions/propertyConfig" } ]
+                                            }
+                                        },
+                                        "required":["type"],
+                                        "additionalProperties": false
+                                    }
+                                ]
+                            }
+                        },
+                        "additionalProperties": false
+                    }]
+                }
+            },
+            "additionalProperties": false
+        }
+    },
+
+    "required": 
+        [
+        "name",
+        "displayName",
+        "version"
+    ],
+    "additionalProperties": false
+}

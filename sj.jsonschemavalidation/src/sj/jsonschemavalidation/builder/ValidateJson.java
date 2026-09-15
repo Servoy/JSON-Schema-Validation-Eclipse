@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -21,20 +20,15 @@ import sj.jsonschemavalidation.ISchemaProvider;
 
 import com.fasterxml.jackson.core.JsonLocation;
 import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.TextNode;
-import com.github.fge.jackson.JsonLoader;
-import com.github.fge.jsonschema.core.exceptions.ProcessingException;
-import com.github.fge.jsonschema.core.report.ProcessingMessage;
-import com.github.fge.jsonschema.core.report.ProcessingReport;
-import com.github.fge.jsonschema.main.JsonSchema;
-import com.github.fge.jsonschema.main.JsonSchemaFactory;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 public class ValidateJson {
 	private static final String MARKER_TYPE = "sj.jsonschemavalidation.jsonProblem";
 	private static Map<IResource, List<IFile>> datafileBySchema = new HashMap<IResource, List<IFile>>();
 	private static final Logger logger = Logger.getAnonymousLogger();
+	private static final ObjectMapper mapper = new ObjectMapper();
+	private static final JsonValidator validator = new JsonValidator();
 	
 	// remove all our eclipse error markers from file
 	private static void deleteMarkers(IFile file) {
@@ -195,8 +189,6 @@ public class ValidateJson {
 				e.printStackTrace();
 			} catch (CoreException e) {
 				e.printStackTrace();
-			} catch (ProcessingException e) {
-				e.printStackTrace();
 			}
 		}
 	}
@@ -225,7 +217,7 @@ public class ValidateJson {
 	}
 
 	private static void checkAgainst(IFile file, IFile schemaFile)
-			throws IOException, CoreException, ProcessingException {
+			throws IOException, CoreException {
 		String schemaString = null;
 		// No schema? Use empty schema to get syntax messages.
 		if (schemaFile != null) {
@@ -240,77 +232,35 @@ public class ValidateJson {
 	 * @param schemaString
 	 * @throws IOException
 	 * @throws CoreException
-	 * @throws ProcessingException
 	 */
 	private static void checkAgainst(IFile file, String schemaString)
-			throws IOException, CoreException, ProcessingException {
+			throws IOException, CoreException {
 		String where = " (" + file.getName() + ". Schema: " + 
 			(schemaString == null ? "(none)" : schemaString) + ")"; 
-		// File ioFile = new File(file.getLocation().toPortableString());				
-		// JsonNode root = JsonLoader.fromFile(ioFile);
 		
 		final String all = readFile(file);
-		
-		JsonNode root;
-		
+
+		// If the document is not even well-formed JSON, honour the JSON Editor
+		// nature check before adding a syntax marker.
 		try {
-			root = JsonLoader.fromString(all);
+			mapper.readTree(all);
 		} catch (JsonParseException parseException) {
-			// not well-formed JSON
 			handleParseException(file, parseException);
 			return;
 		}
-		
-		// .getLocation().toPortableString()
-		JsonNode schemaJson = JsonLoader.fromString("{}");
-		if (schemaString != null) {
-			schemaJson = JsonLoader.fromString(schemaString);
-		}
-		final JsonSchemaFactory factory = JsonSchemaFactory.byDefault();
 
-		final JsonSchema schema = factory.getJsonSchema(schemaJson);
+		List<JsonValidator.Problem> problems = validator.validate(all, schemaString);
+		logger.finer(problems + where);
 
-		ProcessingReport report;
-
-		report = schema.validate(root,true);
-		logger.finer(report + where);
-		
-		
-		Iterator<ProcessingMessage> iterator = report.iterator();
-		// add markers
-		if (iterator.hasNext()) {
-			Map<String, Integer> lineNumbersByJsonPointer = JsonLineNumbers
-					.handleString(all);
-			while (iterator.hasNext()) {
-				ProcessingMessage pm = iterator.next();
-				String msg = pm.getMessage();
-				logger.fine(msg + where);
-				int lineNo = 1;
-				JsonNode json = pm.asJson();
-				JsonNode reports = json.get("reports");
-				if (reports != null) {
-					Iterator<JsonNode> elements = reports.elements();
-					while (elements.hasNext()) {
-						JsonNode reportArray = elements.next();
-						Iterator<JsonNode> elemts2 = reportArray.elements();
-						while (elemts2.hasNext()) {
-							JsonNode jsonNode = elemts2.next().get("message");
-							msg += "\n\t" + ((TextNode) jsonNode).asText();
-						}
-						if (elements.hasNext())
-							msg += "\nor";
-					}
-					reports.getNodeType();
-				}
-				String pointer = ((TextNode) json.get("instance")
-						.get("pointer")).asText();
-				if (lineNumbersByJsonPointer.containsKey(pointer)) {
-					lineNo = lineNumbersByJsonPointer.get(pointer);
-				} else if (!"".equals(pointer)){
-					logger.warning("Unknown line number of \"" + pointer + "\"");
-				}
-				addMarker(file, msg, lineNo, IMarker.SEVERITY_ERROR);
+		for (JsonValidator.Problem problem : problems) {
+			logger.fine(problem.getMessage() + where);
+			if (!"".equals(problem.getPointer())
+					&& problem.getLineNumber() == 1
+					&& !all.startsWith("{")) {
+				// best-effort parity with the old "unknown line number" warning
+				logger.warning("Unknown line number of \"" + problem.getPointer() + "\"");
 			}
+			addMarker(file, problem.getMessage(), problem.getLineNumber(), IMarker.SEVERITY_ERROR);
 		}
 	}
 

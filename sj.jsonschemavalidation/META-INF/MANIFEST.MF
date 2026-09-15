@@ -2,17 +2,16 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: sj.jsonschemavalidation
 Bundle-SymbolicName: sj.jsonschemavalidation;singleton:=true
-Bundle-Version: 2.0.1
+Bundle-Version: 3.0.0
 Bundle-Activator: sj.jsonschemavalidation.builder.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.core.resources
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Bundle-ActivationPolicy: lazy
-Bundle-ClassPath: .,
- lib/jackson-core-2.4.3.jar,
- lib/jackson-databind-2.4.3.jar,
- lib/json-schema-validator-2.2.5-lib.jar,
- lib/jackson-annotations-2.4.3.jar
+Import-Package: com.fasterxml.jackson.core,
+ com.fasterxml.jackson.databind,
+ com.networknt.schema,
+ com.networknt.schema.path
 Export-Package: sj.jsonschemavalidation,
  sj.jsonschemavalidation.builder

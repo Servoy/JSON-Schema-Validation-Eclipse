@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?pde version="3.8"?>
+<target name="sj.jsonschemavalidation" sequenceNumber="3">
+  <locations>
+    <!-- The Eclipse platform itself, straight from the plain Eclipse update site.
+         Provides org.eclipse.ui / core.runtime / core.resources, the OSGi runtime
+         and (for the test fragment) JUnit 5. -->
+    <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
+      <repository location="https://download.eclipse.org/releases/2025-06/"/>
+      <unit id="org.eclipse.sdk.feature.group" version="0.0.0"/>
+      <unit id="org.junit" version="0.0.0"/>
+    </location>
+
+    <!-- Everything that is NOT shipped by Eclipse is pulled straight from Maven Central
+         and used as-is: the (actively maintained) com.networknt json-schema-validator and
+         a modern Jackson are already proper OSGi bundles that export their packages, so no
+         manifest generation or bnd wrapping is needed. Nothing is committed to git. -->
+    <location includeDependencyDepth="infinite" includeDependencyScopes="compile" includeSource="true" missingManifest="error" type="Maven">
+      <dependencies>
+        <dependency>
+          <groupId>com.networknt</groupId>
+          <artifactId>json-schema-validator</artifactId>
+          <version>2.0.1</version>
+          <type>jar</type>
+        </dependency>
+      </dependencies>
+    </location>
+  </locations>
+</target>
